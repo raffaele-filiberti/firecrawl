@@ -26,17 +26,9 @@ services:
   api:
     <<: *common-service
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.firecrawl-web.rule=Host(`crawl.flbrt.it`)
-      - traefik.http.routers.firecrawl-web.entrypoints=web
-      - traefik.http.services.firecrawl-web.loadbalancer.server.port=3002
-      - traefik.http.routers.firecrawl-web.service=firecrawl-web
-      - traefik.http.routers.firecrawl-web.middlewares=redirect-to-https@file
-      - traefik.http.routers.firecrawl-websecure.rule=Host(`crawl.flbrt.it`)
-      - traefik.http.routers.firecrawl-websecure.entrypoints=websecure
-      - traefik.http.services.firecrawl-websecure.loadbalancer.server.port=3002
-      - traefik.http.routers.firecrawl-websecure.service=firecrawl-websecure
-      - traefik.http.routers.firecrawl-websecure.tls.certresolver=letsencrypt
+      - "traefik.http.middlewares.test-apikey.plugin.apiKey.secretParam=apisecret"
+      - traefik.http.middlewares.test-apikey.plugin.apiKey.secretValues=${API_SECRETS}
+      - "traefik.http.middlewares.test-apikey.plugin.apiKey.kind=header"
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       REDIS_RATE_LIMIT_URL: ${REDIS_URL:-redis://redis:6379}

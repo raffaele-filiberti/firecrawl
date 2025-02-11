@@ -4,6 +4,8 @@ x-common-service: &common-service
   build: apps/api
   networks:
     - backend
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
 
 services:
   playwright-service:

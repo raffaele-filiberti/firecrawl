@@ -28,6 +28,7 @@ services:
       - "traefik.http.routers.firecrawl.tls=true"
       - "traefik.http.routers.firecrawl.tls.certresolver=letsencrypt"
       - "traefik.http.routers.firecrawl.middlewares=firecrawl"
+      - "traefik.http.routers.firecrawl.entrypoints=websecure"
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       REDIS_RATE_LIMIT_URL: ${REDIS_URL:-redis://redis:6379}

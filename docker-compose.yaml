@@ -93,7 +93,6 @@ services:
       LOGGING_LEVEL: ${LOGGING_LEVEL}
       FLY_PROCESS_GROUP: worker
     depends_on:
-      - redis
       - playwright-service
       - api
     command: [ "pnpm", "run", "workers" ]

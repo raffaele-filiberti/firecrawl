@@ -22,14 +22,21 @@ services:
   api:
     <<: *common-service
     labels:
-      - "traefik.http.middlewares.firecrawl.plugin.headerauthentication.header.name=Authorization"
-      - "traefik.http.middlewares.firecrawl.plugin.headerauthentication.header.key=Bearer ${BEARER_TOKEN}"
-      - "traefik.http.routers.firecrawl.rule=Host(`crawl.flbrt.it`)"
-      - "traefik.http.routers.firecrawl.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.firecrawl.middlewares=firecrawl"
-      - "traefik.http.routers.firecrawl.entrypoints=websecure"
-      - "traefik.http.services.firecrawl.loadbalancer.server.port=3002"
-      - "traefik.http.routers.firecrawl.services=firecrawl"
+
+      - traefik.enable=true
+      - traefik.http.routers.firecrawl-web.rule=Host(`crawl.flbrt.it`)
+      - traefik.http.routers.firecrawl-web.entrypoints=web
+      - traefik.http.services.firecrawl-web.loadbalancer.server.port=3002
+      - traefik.http.routers.firecrawl-web.service=firecrawl-web
+      - traefik.http.routers.firecrawl-web.middlewares=redirect-to-https@file
+      - traefik.http.routers.firecrawl-websecure.rule=Host(`crawl.flbrt.it`)
+      - traefik.http.routers.firecrawl-websecure.entrypoints=websecure
+      - traefik.http.services.firecrawl-websecure.loadbalancer.server.port=3002
+      - traefik.http.routers.firecrawl-websecure.service=firecrawl-websecure
+      - traefik.http.routers.firecrawl-websecure.tls.certresolver=letsencrypt
+      - "traefik.http.middlewares.firecrawl-websecure.plugin.headerauthentication.header.name=Authorization"
+      - "traefik.http.middlewares.firecrawl-websecure.plugin.headerauthentication.header.key=Bearer ${BEARER_TOKEN}"
+      - "traefik.http.routers.firecrawl-websecure.middlewares=firecrawl-websecure"
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       REDIS_RATE_LIMIT_URL: ${REDIS_URL:-redis://redis:6379}

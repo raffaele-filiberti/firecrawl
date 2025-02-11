@@ -20,7 +20,6 @@ services:
   api:
     <<: *common-service
     labels:
-
       - traefik.enable=true
       - traefik.http.routers.firecrawl-web.rule=Host(`crawl.flbrt.it`)
       - traefik.http.routers.firecrawl-web.entrypoints=web
@@ -58,10 +57,11 @@ services:
       LOGGING_LEVEL: ${LOGGING_LEVEL}
       FLY_PROCESS_GROUP: app
     depends_on:
+      - redis
       - playwright-service
+    ports:
+      - "3002:3002"
     command: [ "pnpm", "run", "start:production" ]
-    networks:
-      - dokploy-network
 
   worker:
     <<: *common-service
@@ -91,10 +91,16 @@ services:
       LOGGING_LEVEL: ${LOGGING_LEVEL}
       FLY_PROCESS_GROUP: worker
     depends_on:
+      - redis
       - playwright-service
       - api
     command: [ "pnpm", "run", "workers" ]
 
+  redis:
+    image: redis:alpine
+    networks:
+      - backend
+    command: redis-server --bind 0.0.0.0
 
 networks:
   backend:

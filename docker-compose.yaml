@@ -101,11 +101,6 @@ services:
       - api
     command: [ "pnpm", "run", "workers" ]
 
-  redis:
-    image: redis:alpine
-    networks:
-      - backend
-    command: redis-server --bind 0.0.0.0
 
 networks:
   backend:

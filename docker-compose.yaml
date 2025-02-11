@@ -25,10 +25,11 @@ services:
       - "traefik.http.middlewares.firecrawl.plugin.headerauthentication.header.name=Authorization"
       - "traefik.http.middlewares.firecrawl.plugin.headerauthentication.header.key=Bearer ${BEARER_TOKEN}"
       - "traefik.http.routers.firecrawl.rule=Host(`crawl.flbrt.it`)"
-      - "traefik.http.routers.firecrawl.tls=true"
       - "traefik.http.routers.firecrawl.tls.certresolver=letsencrypt"
       - "traefik.http.routers.firecrawl.middlewares=firecrawl"
       - "traefik.http.routers.firecrawl.entrypoints=websecure"
+      - "traefik.http.services.firecrawl.loadbalancer.server.port=3002"
+      - "traefik.http.routers.firecrawl.services=firecrawl"
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       REDIS_RATE_LIMIT_URL: ${REDIS_URL:-redis://redis:6379}

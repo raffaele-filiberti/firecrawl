@@ -34,9 +34,6 @@ services:
       - traefik.http.services.firecrawl-websecure.loadbalancer.server.port=3002
       - traefik.http.routers.firecrawl-websecure.service=firecrawl-websecure
       - traefik.http.routers.firecrawl-websecure.tls.certresolver=letsencrypt
-      - "traefik.http.middlewares.firecrawl-websecure.plugin.headerauthentication.header.name=Authorization"
-      - "traefik.http.middlewares.firecrawl-websecure.plugin.headerauthentication.header.key=Bearer ${BEARER_TOKEN}"
-      - "traefik.http.routers.firecrawl-websecure.middlewares=firecrawl-websecure"
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       REDIS_RATE_LIMIT_URL: ${REDIS_URL:-redis://redis:6379}

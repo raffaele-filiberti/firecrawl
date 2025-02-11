@@ -2,10 +2,6 @@ name: firecrawl
 
 x-common-service: &common-service
   build: apps/api
-  ulimits:
-    nofile:
-      soft: 65535
-      hard: 65535
   networks:
     - backend
   extra_hosts:
@@ -25,6 +21,13 @@ services:
 
   api:
     <<: *common-service
+    labels:
+      - "traefik.http.middlewares.firecrawl.plugin.headerauthentication.header.name=Authorization"
+      - "traefik.http.middlewares.firecrawl.plugin.headerauthentication.header.key=Bearer ${BEARER_TOKEN}"
+      - "traefik.http.routers.firecrawl.rule=Host(`crawl.flbrt.it`)"
+      - "traefik.http.routers.firecrawl.tls=true"
+      - "traefik.http.routers.firecrawl.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.firecrawl.middlewares=firecrawl"
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       REDIS_RATE_LIMIT_URL: ${REDIS_URL:-redis://redis:6379}
@@ -56,6 +59,8 @@ services:
     ports:
       - "3002:3002"
     command: [ "pnpm", "run", "start:production" ]
+    networks:
+      - dokploy-network
 
   worker:
     <<: *common-service
@@ -99,3 +104,5 @@ services:
 networks:
   backend:
     driver: bridge
+  dokploy-network:
+    external: true

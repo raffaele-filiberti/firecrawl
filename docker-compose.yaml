@@ -26,9 +26,7 @@ services:
   api:
     <<: *common-service
     labels:
-      - "traefik.http.middlewares.test-apikey.plugin.apiKey.secretParam=apisecret"
-      - traefik.http.middlewares.test-apikey.plugin.apiKey.secretValues=${API_SECRETS}
-      - "traefik.http.middlewares.test-apikey.plugin.apiKey.kind=header"
+      - "traefik.http.middlewares.add-auth-header.headers.customrequestheaders.authorization=Bearer ${API_TOKEN}"
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       REDIS_RATE_LIMIT_URL: ${REDIS_URL:-redis://redis:6379}

@@ -41,6 +41,7 @@ services:
       - "traefik.http.middlewares.testheader.headers.accesscontrolallowmethods=*"
       - "traefik.http.middlewares.testheader.headers.accesscontrolallowheaders=*"
       - "traefik.http.middlewares.testheader.headers.accessControlAllowOriginList=*"
+      - "traefik.http.middlewares.testheader.headers.addvaryheader=true"
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       REDIS_RATE_LIMIT_URL: ${REDIS_URL:-redis://redis:6379}

@@ -38,8 +38,9 @@ services:
       - traefik.http.services.firecrawl-api-guahua-22-websecure.loadbalancer.server.port=3002
       - traefik.http.routers.firecrawl-api-guahua-22-websecure.service=firecrawl-api-guahua-22-websecure
       - traefik.http.routers.firecrawl-api-guahua-22-websecure.tls.certresolver=letsencrypt
-      - "traefik.http.middlewares.testheader.headers.accesscontrolallowmethods=GET,POST,OPTIONS,PUT"
+      - "traefik.http.middlewares.testheader.headers.accesscontrolallowmethods=*"
       - "traefik.http.middlewares.testheader.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.testheader.headers.accessControlAllowOriginList=*"
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       REDIS_RATE_LIMIT_URL: ${REDIS_URL:-redis://redis:6379}

@@ -1,16 +1,15 @@
 name: firecrawl
-
-x-common-service: &common-service
+x-common-service:
   build: apps/api
-  ulimits:
+  ulimits: &ref_0
     nofile:
       soft: 65535
       hard: 65535
-  networks:
+  networks: &ref_1
     - backend
-  extra_hosts:
-    - "host.docker.internal:host-gateway"
-
+    - dokploy-network
+  extra_hosts: &ref_2
+    - host.docker.internal:host-gateway
 services:
   playwright-service:
     build: apps/playwright-service
@@ -22,11 +21,23 @@ services:
       - BLOCK_MEDIA=${BLOCK_MEDIA}
     networks:
       - backend
-
   api:
-    <<: *common-service
+    build: apps/api
+    ulimits: *ref_0
+    networks: *ref_1
+    extra_hosts: *ref_2
     labels:
-      - "traefik.http.middlewares.add-auth-header.headers.customrequestheaders.authorization=Bearer ${API_TOKEN}"
+      - traefik.enable=true
+      - traefik.http.routers.firecrawl-api-guahua-22-web.rule=Host(`crawl.flbrt.it`) && HeadersRegexp(`Authorization`, `Baerer ${API_TOKEN}`)
+      - traefik.http.routers.firecrawl-api-guahua-22-web.entrypoints=web
+      - traefik.http.services.firecrawl-api-guahua-22-web.loadbalancer.server.port=3002
+      - traefik.http.routers.firecrawl-api-guahua-22-web.service=firecrawl-api-guahua-22-web
+      - traefik.http.routers.firecrawl-api-guahua-22-web.middlewares=redirect-to-https@file
+      - traefik.http.routers.firecrawl-api-guahua-22-websecure.rule=Host(`crawl.flbrt.it`) && HeadersRegexp(`Authorization`, `Baerer ${API_TOKEN}`)
+      - traefik.http.routers.firecrawl-api-guahua-22-websecure.entrypoints=websecure
+      - traefik.http.services.firecrawl-api-guahua-22-websecure.loadbalancer.server.port=3002
+      - traefik.http.routers.firecrawl-api-guahua-22-websecure.service=firecrawl-api-guahua-22-websecure
+      - traefik.http.routers.firecrawl-api-guahua-22-websecure.tls.certresolver=letsencrypt
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       REDIS_RATE_LIMIT_URL: ${REDIS_URL:-redis://redis:6379}
@@ -56,11 +67,16 @@ services:
       - redis
       - playwright-service
     ports:
-      - "3002:3002"
-    command: [ "pnpm", "run", "start:production" ]
-
+      - '3002:3002'
+    command:
+      - pnpm
+      - run
+      - start:production
   worker:
-    <<: *common-service
+    build: apps/api
+    ulimits: *ref_0
+    networks: *ref_1
+    extra_hosts: *ref_2
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       REDIS_RATE_LIMIT_URL: ${REDIS_URL:-redis://redis:6379}
@@ -90,14 +106,15 @@ services:
       - redis
       - playwright-service
       - api
-    command: [ "pnpm", "run", "workers" ]
-
+    command:
+      - pnpm
+      - run
+      - workers
   redis:
     image: redis:alpine
     networks:
       - backend
     command: redis-server --bind 0.0.0.0
-
 networks:
   backend:
     driver: bridge

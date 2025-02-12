@@ -28,12 +28,12 @@ services:
     extra_hosts: *ref_2
     labels:
       - traefik.enable=true
-      - traefik.http.routers.firecrawl-api-guahua-22-web.rule=Host(`crawl.flbrt.it`) && (HeaderRegexp(`Authorization`, `Baerer ${API_TOKEN}`) || HeaderRegexp(`Authorization`, `'Baerer ${API_TOKEN}'`))
+      - traefik.http.routers.firecrawl-api-guahua-22-web.rule=Host(`crawl.flbrt.it`) && (HeaderRegexp(`Authorization`, `Bearer ${API_TOKEN}`) || HeaderRegexp(`Authorization`, `'Bearer ${API_TOKEN}'`))
       - traefik.http.routers.firecrawl-api-guahua-22-web.entrypoints=web
       - traefik.http.services.firecrawl-api-guahua-22-web.loadbalancer.server.port=3002
       - traefik.http.routers.firecrawl-api-guahua-22-web.service=firecrawl-api-guahua-22-web
       - traefik.http.routers.firecrawl-api-guahua-22-web.middlewares=redirect-to-https@file
-      - traefik.http.routers.firecrawl-api-guahua-22-websecure.rule=Host(`crawl.flbrt.it`) && (HeaderRegexp(`Authorization`, `Baerer ${API_TOKEN}`) || HeaderRegexp(`Authorization`, `'Baerer ${API_TOKEN}'`))
+      - traefik.http.routers.firecrawl-api-guahua-22-websecure.rule=Host(`crawl.flbrt.it`) && (HeaderRegexp(`Authorization`, `Bearer ${API_TOKEN}`) || HeaderRegexp(`Authorization`, `'Bearer ${API_TOKEN}'`))
       - traefik.http.routers.firecrawl-api-guahua-22-websecure.entrypoints=websecure
       - traefik.http.services.firecrawl-api-guahua-22-websecure.loadbalancer.server.port=3002
       - traefik.http.routers.firecrawl-api-guahua-22-websecure.service=firecrawl-api-guahua-22-websecure

@@ -59,6 +59,7 @@ services:
   api:
     <<: *common-service
     labels:
+      - traefik.enable=true
       - traefik.docker.network=dokploy-network
       # - traefik.http.routers.firecrawl-web.rule="Host(`crawl.flbrt.it`) && Header(`Authorization`, `Bearer ${API_TOKEN}`)"
       - traefik.http.routers.firecrawl-web.rule=Host(`crawl.flbrt.it`)

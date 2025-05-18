@@ -55,9 +55,12 @@ services:
       BLOCK_MEDIA: ${BLOCK_MEDIA}
     networks:
       - backend
+      - dokploy-network
 
   api:
     <<: *common-service
+    labels:
+      - traefik.enable=true
     environment:
       <<: *common-env
       HOST: "0.0.0.0"
@@ -69,6 +72,8 @@ services:
     ports:
       - "${PORT:-3002}:${INTERNAL_PORT:-3002}"
     command: [ "pnpm", "run", "start:production" ]
+    networks:
+      - dokploy-network
 
   worker:
     <<: *common-service
@@ -80,6 +85,8 @@ services:
       - playwright-service
       - api
     command: [ "pnpm", "run", "workers" ]
+    networks:
+      - dokploy-network
 
   redis:
     # NOTE: If you want to use Valkey (open source) instead of Redis (source available),
@@ -90,8 +97,11 @@ services:
 
     networks:
       - backend
+      - dokploy-network
     command: redis-server --bind 0.0.0.0
 
 networks:
   backend:
     driver: bridge
+  dokploy-network:
+    external: true

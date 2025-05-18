@@ -76,14 +76,6 @@ services:
       - traefik.http.middlewares.check-bearer.validateHeaders.headers.header.required=true
       - traefik.http.routers.firecrawl-web.middlewares=check-bearer@file
       - traefik.http.routers.firecrawl-websecure.middlewares=check-bearer@file
-      validateHeaders:
-        headers:
-        - header:
-            name: "Authorization"
-            matchtype: one
-            values:
-            - "Bearer" # Match the "Bearer" prefix
-            required: true # Required header
 
     environment:
       <<: *common-env

@@ -75,7 +75,6 @@ services:
       HOST: "0.0.0.0"
       PORT: ${INTERNAL_PORT:-3002}
       FLY_PROCESS_GROUP: app
-      API_TOKEN: ${API_TOKEN:-CHANGE_ME}
     depends_on:
       - redis
       - playwright-service

@@ -60,22 +60,16 @@ services:
     <<: *common-service
     labels:
       - traefik.docker.network=dokploy-network
-      - traefik.http.routers.firecrawl-web.rule=Host(`crawl.flbrt.it`)
+      - traefik.http.routers.firecrawl-web.rule=Host(`crawl.flbrt.it`) && Headers(Authorization, `Bearer ${API_TOKEN}`)
       - traefik.http.routers.firecrawl-web.entrypoints=web
       - traefik.http.services.firecrawl-web.loadbalancer.server.port=3002
       - traefik.http.routers.firecrawl-web.service=firecrawl-web
       - traefik.http.routers.firecrawl-web.middlewares=redirect-to-https@file
-      - traefik.http.routers.firecrawl-websecure.rule=Host(`crawl.flbrt.it`)
+      - traefik.http.routers.firecrawl-websecure.rule=Host(`crawl.flbrt.it`) && Headers(Authorization, `Bearer ${API_TOKEN}`)
       - traefik.http.routers.firecrawl-websecure.entrypoints=websecure
       - traefik.http.services.firecrawl-websecure.loadbalancer.server.port=3002
       - traefik.http.routers.firecrawl-websecure.service=firecrawl-websecure
       - traefik.http.routers.firecrawl-websecure.tls.certresolver=letsencrypt
-      - traefik.http.middlewares.check-bearer.validateHeaders.headers.header.name=Authorization
-      - traefik.http.middlewares.check-bearer.validateHeaders.headers.header.matchtype=one
-      - traefik.http.middlewares.check-bearer.validateHeaders.headers.header.values[0]="Bearer ${API_TOKEN}"
-      - traefik.http.middlewares.check-bearer.validateHeaders.headers.header.required=true
-      - traefik.http.routers.firecrawl-web.middlewares=check-bearer@file
-      - traefik.http.routers.firecrawl-websecure.middlewares=check-bearer@file
     environment:
       <<: *common-env
       HOST: "0.0.0.0"

@@ -76,12 +76,12 @@ services:
       - traefik.http.middlewares.check-bearer.validateHeaders.headers.header.required=true
       - traefik.http.routers.firecrawl-web.middlewares=check-bearer@file
       - traefik.http.routers.firecrawl-websecure.middlewares=check-bearer@file
-
     environment:
       <<: *common-env
       HOST: "0.0.0.0"
       PORT: ${INTERNAL_PORT:-3002}
       FLY_PROCESS_GROUP: app
+      API_TOKEN: ${API_TOKEN}
     depends_on:
       - redis
       - playwright-service

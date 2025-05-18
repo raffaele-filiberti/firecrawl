@@ -55,12 +55,36 @@ services:
       BLOCK_MEDIA: ${BLOCK_MEDIA}
     networks:
       - backend
-      - dokploy-network
 
   api:
     <<: *common-service
     labels:
-      - traefik.enable=true
+      - traefik.docker.network=dokploy-network
+      - traefik.http.routers.firecrawl-web.rule=Host(`crawl.flbrt.it`)
+      - traefik.http.routers.firecrawl-web.entrypoints=web
+      - traefik.http.services.firecrawl-web.loadbalancer.server.port=3002
+      - traefik.http.routers.firecrawl-web.service=firecrawl-web
+      - traefik.http.routers.firecrawl-web.middlewares=redirect-to-https@file
+      - traefik.http.routers.firecrawl-websecure.rule=Host(`crawl.flbrt.it`)
+      - traefik.http.routers.firecrawl-websecure.entrypoints=websecure
+      - traefik.http.services.firecrawl-websecure.loadbalancer.server.port=3002
+      - traefik.http.routers.firecrawl-websecure.service=firecrawl-websecure
+      - traefik.http.routers.firecrawl-websecure.tls.certresolver=letsencrypt
+      - traefik.http.middlewares.check-bearer.validateHeaders.headers.header.name=Authorization
+      - traefik.http.middlewares.check-bearer.validateHeaders.headers.header.matchtype=one
+      - traefik.http.middlewares.check-bearer.validateHeaders.headers.header.values[0]="Bearer ${API_TOKEN}"
+      - traefik.http.middlewares.check-bearer.validateHeaders.headers.header.required=true
+      - traefik.http.routers.firecrawl-web.middlewares=check-bearer@file
+      - traefik.http.routers.firecrawl-websecure.middlewares=check-bearer@file
+      validateHeaders:
+        headers:
+        - header:
+            name: "Authorization"
+            matchtype: one
+            values:
+            - "Bearer" # Match the "Bearer" prefix
+            required: true # Required header
+
     environment:
       <<: *common-env
       HOST: "0.0.0.0"
@@ -85,8 +109,6 @@ services:
       - playwright-service
       - api
     command: [ "pnpm", "run", "workers" ]
-    networks:
-      - dokploy-network
 
   redis:
     # NOTE: If you want to use Valkey (open source) instead of Redis (source available),
@@ -94,10 +116,8 @@ services:
     # Using Valkey with Firecrawl is untested and not guaranteed to work. Use with caution.
     image: redis:alpine
     # image: valkey/valkey:alpine
-
     networks:
       - backend
-      - dokploy-network
     command: redis-server --bind 0.0.0.0
 
 networks:

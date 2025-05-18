@@ -60,12 +60,12 @@ services:
     <<: *common-service
     labels:
       - traefik.docker.network=dokploy-network
-      - traefik.http.routers.firecrawl-web.rule=Host(`crawl.flbrt.it`) && Header(`Authorization`, `Bearer ${API_TOKEN}`)
+      - traefik.http.routers.firecrawl-web.rule="Host(`crawl.flbrt.it`) && Header(`Authorization`, `Bearer ${API_TOKEN}`)"
       - traefik.http.routers.firecrawl-web.entrypoints=web
       - traefik.http.services.firecrawl-web.loadbalancer.server.port=3002
       - traefik.http.routers.firecrawl-web.service=firecrawl-web
       - traefik.http.routers.firecrawl-web.middlewares=redirect-to-https@file
-      - traefik.http.routers.firecrawl-websecure.rule=Host(`crawl.flbrt.it`) && Header(`Authorization`, `Bearer ${API_TOKEN}`)
+      - traefik.http.routers.firecrawl-websecure.rule="Host(`crawl.flbrt.it`) && Header(`Authorization`, `Bearer ${API_TOKEN}`)"
       - traefik.http.routers.firecrawl-websecure.entrypoints=websecure
       - traefik.http.services.firecrawl-websecure.loadbalancer.server.port=3002
       - traefik.http.routers.firecrawl-websecure.service=firecrawl-websecure
